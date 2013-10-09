@@ -1,0 +1,14 @@
+{
+    "tool":"ffmpeg",
+    "presets":{
+        "b:a":"96k",
+        "ar":"48000",
+        "b:v":"1200k",
+        "r":"25",
+        "s":"854x480",
+        "f":"mp4",
+        "vcodec":"libx264",
+        "acodec":"libfaac",
+        "t":"5"
+    }
+}

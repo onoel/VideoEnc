@@ -3,3 +3,4 @@
 node_modules/execSync
 node_modules/crypto
 node_modules/zmq
+node_modules/sleep
