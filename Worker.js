@@ -28,7 +28,7 @@ try {
 		strProfilePath = config.profiles;
 		objProcess = JSON.parse(objProcessIn.toString());
 		objFile = JSON.parse(objFileIn.toString());
-		
+
 		for ( var taskType in objProcess) {
 			var objTask = objProcess[taskType];
 			
@@ -47,8 +47,8 @@ try {
 			Common.log('Launch task '+taskType);
 			switch (objTask.module) {
 			case 'encode':
-				var Encode = require('Encode');
-				Encode.run(strInputFile, strOutputFile, objTask);
+				//var Encode = require('Encode');
+				//Encode.run(strInputFile, strOutputFile, objTask);
 				break;
 			case 'package':
 				var Package = require('Package');

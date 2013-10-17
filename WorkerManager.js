@@ -71,33 +71,51 @@ function launchJob(strPathToFile, idTemplate, objInputTemplate, intTmpUID) {
 			for(var tmpName in objInputTemplate) {
 				arrTmpProcess[tmpName] = objTemplate[tmpName];
 			}
-			itemName = getKey(objInputTemplate);
+			strNodeName = getKey(objInputTemplate);
 		} else {
-			itemName = getKey(objTemplate);
+			strNodeName = getKey(objTemplate);
 			arrTmpProcess = objTemplate;
 		}
 		
-		objTaskOption = objTemplate[itemName].process;
-		taskOption = objTemplate[itemName].type;
-		
-		if (taskOption == 'single' || taskOption == 'parallel'){
-			strPrefix = taskOption;
+		objTaskOption = objTemplate[strNodeName].process;
+		strTaskOption = objTemplate[strNodeName].type;
+
+        if (strTaskOption == 'single'){
+            strPrefix = strTaskOption;
+            if (intFlagStop === false){
+                Common.log('[' + intUID + '] Launch '+ strNodeName);
+            }
+
+            strProcessName = getKey(objTaskOption);
+
+            if (intFlagStop === false){
+                Common.log('[' + intUID + '] Launch process name '+ strProcessName);
+                socketPush.send([intUID, strNodeName, strProcessName, JSON.stringify(objTaskOption), JSON.stringify(objFile)]);
+                arrTmpProcess[strNodeName].process[strProcessName] = 1;
+            } else {
+                arrTmpProcess[strNodeName].process[strProcessName] = 0;
+            }
+
+            intFlagStop = true;
+        } else if (strTaskOption == 'parallel'){
+
+			strPrefix = strTaskOption;
 			if (intFlagStop === false){
-				Common.log('[' + intUID + '] Launch '+itemName);
+				Common.log('[' + intUID + '] Launch '+strNodeName);
 			}
 			for (var strProcessName in objTaskOption){
 				objProcess = objTaskOption[strProcessName];
 				if (intFlagStop === false){
 					Common.log('[' + intUID + '] Launch process name '+strProcessName);
-					socketPush.send([intUID, itemName, strProcessName,JSON.stringify(objProcess), JSON.stringify(objFile)]);
-					arrTmpProcess[itemName].process[strProcessName] = 1;
+					socketPush.send([intUID, strNodeName, strProcessName,JSON.stringify(objProcess), JSON.stringify(objFile)]);
+					arrTmpProcess[strNodeName].process[strProcessName] = 1;
 				} else {
-					arrTmpProcess[itemName].process[strProcessName] = 0;
+					arrTmpProcess[strNodeName].process[strProcessName] = 0;
 				}
 			}
 			intFlagStop = true;
 		} else {
-			Common.log('[' + intUID + '] Task option not available ' + taskOption);
+			Common.log('[' + intUID + '] Task option not available ' + strTaskOption);
 		}
 	
 		arrTmpReturn[intUID] = {"template" : arrTmpProcess, "file_path" : strPathToFile, "id_template" : idTemplate};
@@ -117,19 +135,21 @@ try {
 		arrProcess[getKey(arrTmp)] = arrTmp[getKey(arrTmp)];
 	});
 	
-	socketPull.on('message', function(intUIDTmp, itemNameTmp, processNameTmp, workerId) {
+	socketPull.on('message', function(intUIDTmp, strNodeNameTmp, processNameTmp, workerId) {
 		intUID = intUIDTmp.toString();
-		itemName = itemNameTmp.toString();
+		strNodeName = strNodeNameTmp.toString();
 		processName = processNameTmp.toString();
-		if (intUID != '' && itemName != ''){
-			Common.log('[' + intUID + '] ['+workerId+ '] End of process name '+ processName);
-			delete(arrProcess[intUID].template[itemName].process[processName]);
-			if (count_obj(arrProcess[intUID].template[itemName].process) == 0){
-				delete(arrProcess[intUID].template[itemName]);
+		if (intUID != '' && strNodeName != ''){
+			Common.log('[' + intUID + '] End of process name '+ processName + ' ('+workerId+ ')');
+			delete(arrProcess[intUID].template[strNodeName].process[processName]);
+			if (count_obj(arrProcess[intUID].template[strNodeName].process) == 0){
+				delete(arrProcess[intUID].template[strNodeName]);
 				if (count_obj(arrProcess[intUID].template) > 0) {
 					arrTmp = launchJob(arrProcess[intUID].file_path, arrProcess[intUID].id_template, arrProcess[intUID].template, intUID);
 					arrProcess[getKey(arrTmp)] = arrTmp[getKey(arrTmp)];
-				}
+				} else {
+                    Common.log('[' + intUID + '] End of job');
+                }
 			}
 		}
 	});
