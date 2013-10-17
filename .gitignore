@@ -1,5 +1,6 @@
 .project
 .settings
+.idea
 node_modules/execSync
 node_modules/crypto
 node_modules/zmq
