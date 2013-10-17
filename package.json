@@ -1,18 +1,24 @@
 {
-  "name": "VideoEnc",
-  "version": "0.1.0",
-  "description": "VideoEnc",
-  "main": "VideoEnc.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified! Configure in package.json\" && exit 1"
-  },
-  "repository": "",
-  "keywords": [
-    "Node.js",
-    "Eclipse",
-    "Nodeclipse"
-  ],
-  "author": "",
-  "license": "BSD",
-  "readmeFilename": "README.md"
+    "name": "VideoEnc",
+    "version": "0.1.0",
+    "description": "VideoEnc",
+    "main": "VideoEnc.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified! Configure in package.json\" && exit 1"
+    },
+    "repository": "",
+    "keywords": [
+        "Node.js",
+        "Eclipse",
+        "Nodeclipse"
+    ],
+    "author": "",
+    "license": "BSD",
+    "readmeFilename": "README.md",
+    "dependencies": {
+        "execSync": ">=1.0.1-pre",
+        "crypto": ">=0.0.3",
+        "zmq": ">=2.5.1",
+        "sleep": ">=1.1.1"
+    }
 }
